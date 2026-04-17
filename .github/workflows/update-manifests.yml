@@ -1,0 +1,44 @@
+name: Update Manifests
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install 7-Zip
+        run: choco install 7zip -y
+
+      - name: Build generator
+        run: |
+          cd tools/manifest-generator
+          go build -o manifest-generator.exe .
+
+      - name: Generate manifests
+        run: |
+          cd tools/manifest-generator
+          ./manifest-generator.exe -manifest-dir ../../manifests
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifests/
+          $newFiles = @(git diff --cached --name-only --diff-filter=A)
+          if ($newFiles.Count -gt 0) {
+            $versions = $newFiles | ForEach-Object { ($_ -split '/')[3] } | Select-Object -Unique
+            $message = "Add manifests for: $($versions -join ', ')"
+            git commit -m $message
+            git push
+          } else {
+            Write-Host "No new manifests to commit"
+          }

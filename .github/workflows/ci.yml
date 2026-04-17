@@ -1,0 +1,44 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build
+        run: |
+          cd tools/manifest-generator
+          go build ./...
+
+      - name: Vet
+        run: |
+          cd tools/manifest-generator
+          go vet ./...
+
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifests
+        run: |
+          $manifests = Get-ChildItem manifests -Recurse -Filter *.installer.yaml -ErrorAction SilentlyContinue
+          if ($manifests) {
+            foreach ($manifest in $manifests) {
+              Write-Host "Validating $($manifest.FullName)"
+              winget validate $manifest.FullName
+              if ($LASTEXITCODE -ne 0) {
+                Write-Error "Validation failed for $($manifest.FullName)"
+                exit 1
+              }
+            }
+          } else {
+            Write-Host "No manifests to validate yet"
+          }
