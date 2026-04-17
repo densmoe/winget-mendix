@@ -42,8 +42,8 @@ extract_guid() {
 
     echo "[$version] Downloading $url..."
 
-    local temp_file=$(mktemp /tmp/mendix-XXXXXX.exe)
-    local extract_dir=$(mktemp -d /tmp/mendix-extract-XXXXXX)
+    local temp_file=$(mktemp "/tmp/mendix-${version}-XXXXXX.exe")
+    local extract_dir=$(mktemp -d "/tmp/mendix-extract-${version}-XXXXXX")
 
     if ! curl -sL "$url" -o "$temp_file"; then
         echo "[$version] Download failed"
