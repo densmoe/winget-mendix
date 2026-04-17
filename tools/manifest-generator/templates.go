@@ -22,8 +22,10 @@ InstallModes:
 Installers:{{range .Installers}}
   - Architecture: {{.Arch}}
     InstallerType: exe
+    Scope: {{.Scope}}
     InstallerUrl: {{.URL}}
-    InstallerSha256: {{.SHA256}}
+    InstallerSha256: {{.SHA256}}{{if .ElevationRequirement}}
+    ElevationRequirement: {{.ElevationRequirement}}{{end}}
     ProductCode: "{{.GUID}}"{{end}}
 InstallationNotes: "Multiple versions can be installed side-by-side."
 ManifestVersion: 1.4.0
@@ -47,8 +49,10 @@ type ManifestData struct {
 }
 
 type InstallerData struct {
-	Arch   string
-	URL    string
-	SHA256 string
-	GUID   string
+	Arch                 string
+	Scope                string
+	URL                  string
+	SHA256               string
+	GUID                 string
+	ElevationRequirement string
 }

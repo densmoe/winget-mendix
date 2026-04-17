@@ -43,8 +43,15 @@ winget install Mendix.MendixStudioPro --version 11.9.1 --source mendix
 
 ## Installer URLs
 
-- x64: `https://artifacts.rnd.mendix.com/modelers/Mendix-{VERSION}-Setup.exe`
-- ARM64: `https://artifacts.rnd.mendix.com/modelers/Mendix-{VERSION}-Setup-ARM64.exe`
+Each version has up to 3 installer variants:
+
+- **Machine x64**: `Mendix-{VERSION}-Setup.exe` (admin, machine-wide)
+- **User x64**: `Mendix-{VERSION}-User-x64-Setup.exe` (no admin)
+- **User ARM64**: `Mendix-{VERSION}-User-arm64-Setup.exe` (no admin)
+
+SHA256 hashes available at `{installer-url}.sha256` on the CDN.
+
+CDN base: `https://artifacts.rnd.mendix.com/modelers/`
 
 ## Git Workflow
 

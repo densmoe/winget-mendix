@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/sha256"
 	"flag"
 	"fmt"
 	"io"
@@ -13,6 +12,42 @@ import (
 	"time"
 )
 
+type installerVariant struct {
+	name                 string
+	arch                 string
+	scope                string
+	elevationRequirement string
+	urlFunc              func(Release) string
+}
+
+var variants = []installerVariant{
+	{
+		name:                 "machine x64",
+		arch:                 "x64",
+		scope:                "machine",
+		elevationRequirement: "elevatesSelf",
+		urlFunc: func(r Release) string {
+			return fmt.Sprintf("https://artifacts.rnd.mendix.com/modelers/Mendix-%s-Setup.exe", r.VersionFull)
+		},
+	},
+	{
+		name:  "user x64",
+		arch:  "x64",
+		scope: "user",
+		urlFunc: func(r Release) string {
+			return fmt.Sprintf("https://artifacts.rnd.mendix.com/modelers/Mendix-%s-User-x64-Setup.exe", r.VersionFull)
+		},
+	},
+	{
+		name:  "user arm64",
+		arch:  "arm64",
+		scope: "user",
+		urlFunc: func(r Release) string {
+			return fmt.Sprintf("https://artifacts.rnd.mendix.com/modelers/Mendix-%s-User-arm64-Setup.exe", r.VersionFull)
+		},
+	},
+}
+
 func main() {
 	manifestDir := flag.String("manifest-dir", "../../manifests", "Directory for manifests")
 	skipSHA := flag.Bool("skip-sha", false, "Skip SHA256 computation")
@@ -20,7 +55,6 @@ func main() {
 	dryRun := flag.Bool("dry-run", false, "Preview only")
 	versionTypes := flag.String("version-types", "LTS,MTS,Stable", "Comma-separated version types")
 	minMajor := flag.Int("min-major", 10, "Minimum major version")
-	_ = flag.Int("workers", 3, "Parallel workers for downloads")
 	flag.Parse()
 
 	types := strings.Split(*versionTypes, ",")
@@ -51,51 +85,54 @@ func main() {
 		fmt.Printf("Processing %s...\n", manifestVersion)
 
 		var installers []InstallerData
-		for _, arch := range []string{"x64", "arm64"} {
-			url := installerURL(release, arch)
+		for _, v := range variants {
+			url := v.urlFunc(release)
 
 			if !urlExists(url) {
-				fmt.Printf("  %s: not available\n", arch)
+				fmt.Printf("  %s: not available\n", v.name)
 				continue
 			}
 
 			var sha string
-			var guid string
-
 			if *skipSHA {
 				sha = "SHA256_PLACEHOLDER"
 			} else {
-				sha, err = computeSHA256(url)
+				sha, err = fetchSHA256FromCDN(url)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "  Error computing SHA256: %v\n", err)
+					fmt.Fprintf(os.Stderr, "  %s: SHA256 fetch failed: %v\n", v.name, err)
 					continue
 				}
 			}
 
+			var guid string
 			if *skipGUID {
 				guid = GUIDPlaceholder(manifestVersion)
-			} else {
+			} else if v.scope == "machine" {
 				tempFile, dlErr := downloadToTemp(url)
 				if dlErr != nil {
-					fmt.Fprintf(os.Stderr, "  Error downloading: %v\n", dlErr)
+					fmt.Fprintf(os.Stderr, "  %s: download failed: %v\n", v.name, dlErr)
 					guid = GUIDPlaceholder(manifestVersion)
 				} else {
 					guid, err = ExtractProductGUID(tempFile)
 					if err != nil {
-						fmt.Printf("  Warning: GUID extraction failed: %v\n", err)
+						fmt.Printf("  %s: GUID extraction failed: %v\n", v.name, err)
 						guid = GUIDPlaceholder(manifestVersion)
 					}
 					os.Remove(tempFile)
 				}
+			} else {
+				guid = GUIDPlaceholder(manifestVersion)
 			}
 
 			installers = append(installers, InstallerData{
-				Arch:   arch,
-				URL:    url,
-				SHA256: sha,
-				GUID:   guid,
+				Arch:                 v.arch,
+				Scope:                v.scope,
+				URL:                  url,
+				SHA256:               sha,
+				GUID:                 guid,
+				ElevationRequirement: v.elevationRequirement,
 			})
-			fmt.Printf("  %s: OK\n", arch)
+			fmt.Printf("  %s: OK\n", v.name)
 		}
 
 		if len(installers) == 0 {
@@ -104,7 +141,7 @@ func main() {
 		}
 
 		if *dryRun {
-			fmt.Printf("  [DRY RUN] Would create: %s\n", versionDir)
+			fmt.Printf("  [DRY RUN] Would create: %s (%d installers)\n", versionDir, len(installers))
 			continue
 		}
 
@@ -130,15 +167,6 @@ func manifestVersionFor(r Release) string {
 	return fmt.Sprintf("%d.%d.%d", r.Major, r.Minor, r.Patch)
 }
 
-func installerURL(r Release, arch string) string {
-	version := r.VersionFull
-	archSuffix := ""
-	if arch == "arm64" {
-		archSuffix = "-ARM64"
-	}
-	return fmt.Sprintf("https://artifacts.rnd.mendix.com/modelers/Mendix-%s-Setup%s.exe", version, archSuffix)
-}
-
 func urlExists(url string) bool {
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Head(url)
@@ -149,20 +177,30 @@ func urlExists(url string) bool {
 	return resp.StatusCode == 200
 }
 
-func computeSHA256(url string) (string, error) {
-	client := &http.Client{Timeout: 10 * time.Minute}
-	resp, err := client.Get(url)
+func fetchSHA256FromCDN(url string) (string, error) {
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Get(url + ".sha256")
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
-	h := sha256.New()
-	if _, err := io.Copy(h, resp.Body); err != nil {
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("SHA256 file not found (HTTP %d)", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("%X", h.Sum(nil)), nil
+	// Format: "hash *filename" or just "hash"
+	parts := strings.Fields(strings.TrimSpace(string(body)))
+	if len(parts) == 0 {
+		return "", fmt.Errorf("empty SHA256 file")
+	}
+
+	return strings.ToUpper(parts[0]), nil
 }
 
 func downloadToTemp(url string) (string, error) {

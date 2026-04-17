@@ -25,7 +25,11 @@ winget search Mendix.MendixStudioPro --source mendix
 
 ## Architecture Support
 
-Both x64 and ARM64 installers are supported where available.
+Each version includes up to three installer variants:
+
+- **Machine x64** — traditional admin installer (`--scope machine`)
+- **User x64** — no admin required (`--scope user`)
+- **User ARM64** — no admin required, for ARM devices (`--scope user`)
 
 ## Developer Setup
 
@@ -46,16 +50,15 @@ go run . -manifest-dir ../../manifests
 - `-dry-run`: Preview without writing files
 - `-version-types`: Filter by type (default: `LTS,MTS,Stable`)
 - `-min-major`: Minimum major version (default: `10`)
-- `-workers`: Parallel downloads (default: `3`)
 
 ## How It Works
 
 1. Queries Mendix Marketplace API for all Studio Pro releases
-2. Filters by version type (LTS/MTS/Stable) and minimum version (Mx10.7+)
-3. Checks CDN for x64 and ARM64 installer availability
-4. Downloads installers and computes SHA256 hashes
-5. Extracts Product GUIDs from .exe files using 7-Zip
-6. Generates three YAML manifest files per version
+2. Filters by version type (LTS/MTS/Stable) and minimum version (Mx10+)
+3. Checks CDN for all installer variants (machine x64, user x64, user arm64)
+4. Fetches SHA256 hashes from CDN `.sha256` files (no full download needed)
+5. Optionally extracts Product GUIDs from machine installers using 7-Zip
+6. Generates three YAML manifest files per version (package, installer, locale)
 7. Daily GitHub Actions workflow automates updates
 
 ## Migration to Official Repository
