@@ -178,7 +178,7 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 		Installers: installers,
 	}
 
-	writeManifest(filepath.Join(versionDir, "Mendix.MendixStudioPro.yaml"), packageManifestTemplate, data)
+	writeManifest(filepath.Join(versionDir, "Mendix.MendixStudioPro.yaml"), versionManifestTemplate, data)
 	writeManifest(filepath.Join(versionDir, "Mendix.MendixStudioPro.installer.yaml"), installerManifestTemplate, data)
 	writeManifest(filepath.Join(versionDir, "Mendix.MendixStudioPro.locale.en-US.yaml"), localeManifestTemplate, data)
 

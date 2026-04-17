@@ -1,12 +1,5 @@
 PackageIdentifier: Mendix.MendixStudioPro
 PackageVersion: 10.24.9
-PackageLocale: en-US
-PackageName: Mendix Studio Pro
-Publisher: Mendix
-PublisherUrl: https://www.mendix.com/
-PublisherSupportUrl: https://www.mendix.com/support/
-PackageUrl: https://www.mendix.com/studio-pro/
-License: Proprietary
-ShortDescription: Low-code application development platform
-ManifestType: defaultLocale
-ManifestVersion: 1.4.0
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0

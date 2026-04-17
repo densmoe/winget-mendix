@@ -25,4 +25,4 @@ Installers:
     ProductCode: "{MENDIX-STUDIO-PRO-10-24-15-PLACEHOLDER}"
 InstallationNotes: "Multiple versions can be installed side-by-side."
 ManifestType: installer
-ManifestVersion: 1.4.0
+ManifestVersion: 1.6.0

@@ -2,18 +2,11 @@ package main
 
 import "text/template"
 
-var packageManifestTemplate = template.Must(template.New("package").Parse(`PackageIdentifier: Mendix.MendixStudioPro
+var versionManifestTemplate = template.Must(template.New("version").Parse(`PackageIdentifier: Mendix.MendixStudioPro
 PackageVersion: {{.Version}}
-PackageLocale: en-US
-PackageName: Mendix Studio Pro
-Publisher: Mendix
-PublisherUrl: https://www.mendix.com/
-PublisherSupportUrl: https://www.mendix.com/support/
-PackageUrl: https://www.mendix.com/studio-pro/
-License: Proprietary
-ShortDescription: Low-code application development platform
-ManifestType: defaultLocale
-ManifestVersion: 1.4.0
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0
 `))
 
 var installerManifestTemplate = template.Must(template.New("installer").Parse(`PackageIdentifier: Mendix.MendixStudioPro
@@ -31,7 +24,7 @@ Installers:{{range .Installers}}
     ProductCode: "{{.GUID}}"{{end}}
 InstallationNotes: "Multiple versions can be installed side-by-side."
 ManifestType: installer
-ManifestVersion: 1.4.0
+ManifestVersion: 1.6.0
 `))
 
 var localeManifestTemplate = template.Must(template.New("locale").Parse(`PackageIdentifier: Mendix.MendixStudioPro
@@ -41,10 +34,11 @@ Publisher: Mendix
 PublisherUrl: https://www.mendix.com/
 PublisherSupportUrl: https://www.mendix.com/support/
 PackageUrl: https://www.mendix.com/studio-pro/
+PackageName: Mendix Studio Pro
 License: Proprietary
 ShortDescription: Low-code application development platform
-ManifestType: locale
-ManifestVersion: 1.4.0
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0
 `))
 
 type ManifestData struct {
