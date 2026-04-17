@@ -190,7 +190,6 @@ func parseRelease(obj map[string]interface{}, versionTypes []string, minMajor in
 		return nil, fmt.Errorf("missing attributes")
 	}
 
-	versionText := getAttrString(attrs, "VersionText")
 	versionType := getAttrString(attrs, "VersionType")
 	status := getAttrString(attrs, "Status")
 
@@ -202,11 +201,19 @@ func parseRelease(obj map[string]interface{}, versionTypes []string, minMajor in
 		return nil, nil
 	}
 
-	versionText = strings.Split(versionText, " (build")[0]
-	parts := strings.Split(versionText, ".")
+	// Use the Version field which contains the full version string (e.g., "10.18.4.61760")
+	// VersionText may be shortened for display (e.g., "10.18.4")
+	versionFull := getAttrString(attrs, "Version")
+	if versionFull == "" {
+		// Fallback to VersionText if Version field not available
+		versionFull = getAttrString(attrs, "VersionText")
+	}
+
+	versionFull = strings.Split(versionFull, " (build")[0]
+	parts := strings.Split(versionFull, ".")
 
 	if len(parts) < 3 {
-		return nil, fmt.Errorf("invalid version: %s", versionText)
+		return nil, fmt.Errorf("invalid version: %s", versionFull)
 	}
 
 	major, _ := strconv.Atoi(parts[0])
@@ -221,7 +228,8 @@ func parseRelease(obj map[string]interface{}, versionTypes []string, minMajor in
 		return nil, nil
 	}
 
-	fullVersion := versionText
+	// Build full version string
+	fullVersion := fmt.Sprintf("%d.%d.%d", major, minor, patch)
 	if build > 0 {
 		fullVersion = fmt.Sprintf("%d.%d.%d.%d", major, minor, patch, build)
 	}
@@ -246,6 +254,23 @@ func getAttrString(attrs map[string]interface{}, key string) string {
 		return v
 	}
 	return ""
+}
+
+func getAttrInt(attrs map[string]interface{}, key string) int {
+	attr, ok := attrs[key].(map[string]interface{})
+	if !ok {
+		return 0
+	}
+	// Try float64 first (JSON numbers)
+	if v, ok := attr["value"].(float64); ok {
+		return int(v)
+	}
+	// Try string parsing
+	if v, ok := attr["value"].(string); ok {
+		result, _ := strconv.Atoi(v)
+		return result
+	}
+	return 0
 }
 
 func contains(slice []string, item string) bool {

@@ -39,9 +39,11 @@ winget install Mendix.MendixStudioPro --version 11.9.1 --source mendix
 ## Mendix Version Patterns
 
 - **Minimum version**: Mx9.24 (earlier versions lack modern installers)
-- **Mx11+**: Semver format `11.9.1`, manifest version = download version
-- **Mx10**: 4-part format `10.24.13.86719`, manifest version = `10.24.13` (drop build)
-- **Mx9**: 4-part format `9.24.28.77777`, manifest version = `9.24.28` (drop build)
+- **Mx11+**: Semver format `11.9.1` (3-part), used for both download URL and manifest version
+- **Mx10**: 4-part format `10.24.13.86719` (includes build number), manifest version = `10.24.13` (drop build)
+- **Mx9**: 4-part format `9.24.35.71123` (includes build number), manifest version = `9.24.35` (drop build)
+
+**Important:** Not all API releases have published installers. LTS releases always have installers, but many MTS/Stable patch releases don't exist on the CDN. The generator validates each URL before creating manifests.
 
 ## Installer URLs
 

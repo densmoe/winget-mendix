@@ -79,7 +79,7 @@ cd tools
 
 1. Queries Mendix Marketplace API for all Studio Pro releases
 2. Filters by version type (LTS/MTS/Stable) and minimum version (**Mx9.24+**)
-3. Validates installer availability on CDN (checks file size to detect 404 errors)
+3. Validates installer availability on CDN (HEAD request + Content-Length check to detect 404s)
 4. Fetches SHA256 hashes from CDN `.sha256` files (no full download needed)
 5. Optionally extracts real Product GUIDs from machine installers using 7-Zip
 6. Generates three YAML manifest files per version (version, installer, defaultLocale)
@@ -88,6 +88,8 @@ cd tools
    - Filters out versions with existing manifests
    - Processes next 10 versions that need manifests
    - Skips to next batch automatically on subsequent runs
+
+**Note:** Not all API releases have published installers. The generator automatically skips versions where installers don't exist on the CDN (e.g., some MTS/Stable patch releases for Mx9/10).
 
 ## Migration to Official Repository
 
