@@ -1,0 +1,27 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 10.24.4
+InstallModes:
+  - interactive
+  - silent
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.24.4.77222-Setup.exe
+    InstallerSha256: 4F9D0DFDB896DCC3E71A4E5C72B3C3860E602C595CFD249001A3D030B519971A
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{MENDIX-STUDIO-PRO-10-24-4-PLACEHOLDER}"
+  - Architecture: x64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.24.4.77222-User-x64-Setup.exe
+    InstallerSha256: 7A791BD3510482A64C812EC4D80F0EA41DC2977252E24B1DF9ABFCDFEBDA5FBE
+    ProductCode: "{MENDIX-STUDIO-PRO-10-24-4-PLACEHOLDER}"
+  - Architecture: arm64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.24.4.77222-User-arm64-Setup.exe
+    InstallerSha256: F1E0CBEF434CF9AEE2344B3969F0DAEE7964C2CFE55BD7574309AA1CF21567DD
+    ProductCode: "{MENDIX-STUDIO-PRO-10-24-4-PLACEHOLDER}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestVersion: 1.4.0

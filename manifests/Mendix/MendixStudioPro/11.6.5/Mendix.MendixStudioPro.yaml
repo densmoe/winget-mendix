@@ -1,0 +1,10 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 11.6.5
+PackageName: Mendix Studio Pro
+Publisher: Mendix
+PublisherUrl: https://www.mendix.com/
+PublisherSupportUrl: https://www.mendix.com/support/
+PackageUrl: https://www.mendix.com/studio-pro/
+License: Proprietary
+ShortDescription: Low-code application development platform
+ManifestVersion: 1.4.0
