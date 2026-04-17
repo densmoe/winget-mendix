@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha256"
 	"flag"
 	"fmt"
 	"io"
@@ -160,7 +161,7 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 			sha = "SHA256_PLACEHOLDER"
 		} else {
 			var err error
-			sha, err = fetchSHA256FromCDN(url)
+			sha, err = fetchSHA256(url)
 			if err != nil {
 				continue
 			}
@@ -233,7 +234,19 @@ func urlExists(url string) bool {
 	return true
 }
 
-func fetchSHA256FromCDN(url string) (string, error) {
+func fetchSHA256(url string) (string, error) {
+	// Try the .sha256 sidecar file first (fast, available for newer versions)
+	sha, err := fetchSHA256FromSidecar(url)
+	if err == nil {
+		return sha, nil
+	}
+
+	// Fall back to downloading the installer and computing the hash
+	fmt.Printf("  computing SHA256 for %s (no .sha256 file)\n", filepath.Base(url))
+	return computeSHA256FromURL(url)
+}
+
+func fetchSHA256FromSidecar(url string) (string, error) {
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Get(url + ".sha256")
 	if err != nil {
@@ -256,6 +269,26 @@ func fetchSHA256FromCDN(url string) (string, error) {
 	}
 
 	return strings.ToUpper(parts[0]), nil
+}
+
+func computeSHA256FromURL(url string) (string, error) {
+	client := &http.Client{Timeout: 30 * time.Minute}
+	resp, err := client.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("download failed (HTTP %d)", resp.StatusCode)
+	}
+
+	h := sha256.New()
+	if _, err := io.Copy(h, resp.Body); err != nil {
+		return "", fmt.Errorf("download interrupted: %w", err)
+	}
+
+	return fmt.Sprintf("%X", h.Sum(nil)), nil
 }
 
 func writeManifest(path string, tmpl *template.Template, data ManifestData) error {
