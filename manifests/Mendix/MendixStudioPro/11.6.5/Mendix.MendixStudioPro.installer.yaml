@@ -24,4 +24,5 @@ Installers:
     InstallerSha256: 9325C82D6A6640910184EFD598E260CB2D0DDEAC338ECB574BB60F1C3D72F0B8
     ProductCode: "{MENDIX-STUDIO-PRO-11-6-5-PLACEHOLDER}"
 InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
 ManifestVersion: 1.4.0

@@ -11,6 +11,7 @@ PublisherSupportUrl: https://www.mendix.com/support/
 PackageUrl: https://www.mendix.com/studio-pro/
 License: Proprietary
 ShortDescription: Low-code application development platform
+ManifestType: defaultLocale
 ManifestVersion: 1.4.0
 `))
 
@@ -28,6 +29,7 @@ Installers:{{range .Installers}}
     ElevationRequirement: {{.ElevationRequirement}}{{end}}
     ProductCode: "{{.GUID}}"{{end}}
 InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
 ManifestVersion: 1.4.0
 `))
 
@@ -40,6 +42,7 @@ PublisherSupportUrl: https://www.mendix.com/support/
 PackageUrl: https://www.mendix.com/studio-pro/
 License: Proprietary
 ShortDescription: Low-code application development platform
+ManifestType: locale
 ManifestVersion: 1.4.0
 `))
 
