@@ -185,9 +185,14 @@ func (c *MarketplaceClient) fetchPage(offset, limit int, versionTypes []string, 
 }
 
 func parseRelease(obj map[string]interface{}, versionTypes []string, minMajor int) (*Release, error) {
-	versionText := getString(obj, "VersionText")
-	versionType := getString(obj, "VersionType")
-	status := getString(obj, "Status")
+	attrs, ok := obj["attributes"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("missing attributes")
+	}
+
+	versionText := getAttrString(attrs, "VersionText")
+	versionType := getAttrString(attrs, "VersionType")
+	status := getAttrString(attrs, "Status")
 
 	if status == "Deprecated" {
 		return nil, nil
@@ -232,8 +237,12 @@ func parseRelease(obj map[string]interface{}, versionTypes []string, minMajor in
 	}, nil
 }
 
-func getString(m map[string]interface{}, key string) string {
-	if v, ok := m[key].(string); ok {
+func getAttrString(attrs map[string]interface{}, key string) string {
+	attr, ok := attrs[key].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	if v, ok := attr["value"].(string); ok {
 		return v
 	}
 	return ""
