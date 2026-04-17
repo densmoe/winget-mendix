@@ -75,12 +75,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Filter out versions that already have manifests
+	// Filter out versions that already have complete manifests
 	var needsManifests []Release
 	for _, release := range releases {
 		manifestVersion := manifestVersionFor(release)
 		versionDir := filepath.Join(*manifestDir, "Mendix", "MendixStudioPro", manifestVersion)
-		if _, err := os.Stat(versionDir); os.IsNotExist(err) {
+		if !manifestComplete(versionDir) {
 			needsManifests = append(needsManifests, release)
 		}
 	}
@@ -130,8 +130,8 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 	manifestVersion := manifestVersionFor(release)
 	versionDir := filepath.Join(manifestDir, "Mendix", "MendixStudioPro", manifestVersion)
 
-	if _, err := os.Stat(versionDir); err == nil {
-		return fmt.Sprintf("Skipping %s (already exists)", manifestVersion)
+	if manifestComplete(versionDir) {
+		return fmt.Sprintf("Skipping %s (complete)", manifestVersion)
 	}
 
 	// Some Mx11 versions have a build number in the API but 3-part URLs on the CDN.
@@ -210,6 +210,36 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 
 func manifestVersionFor(r Release) string {
 	return fmt.Sprintf("%d.%d.%d", r.Major, r.Minor, r.Patch)
+}
+
+func manifestComplete(versionDir string) bool {
+	installerPath := filepath.Join(versionDir, "Mendix.MendixStudioPro.installer.yaml")
+	localePath := filepath.Join(versionDir, "Mendix.MendixStudioPro.locale.en-US.yaml")
+	versionPath := filepath.Join(versionDir, "Mendix.MendixStudioPro.yaml")
+
+	for _, p := range []string{installerPath, localePath, versionPath} {
+		if _, err := os.Stat(p); err != nil {
+			return false
+		}
+	}
+
+	content, err := os.ReadFile(installerPath)
+	if err != nil {
+		return false
+	}
+
+	s := string(content)
+	if strings.Contains(s, "PLACEHOLDER") {
+		return false
+	}
+	if !strings.Contains(s, "InstallerSha256:") {
+		return false
+	}
+	if !strings.Contains(s, "ProductCode:") {
+		return false
+	}
+
+	return true
 }
 
 func urlExists(url string) bool {
