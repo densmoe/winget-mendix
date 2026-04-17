@@ -4,24 +4,28 @@ Winget manifests for Mendix Studio Pro - side-by-side version management on Wind
 
 ## Installation
 
-### Add Custom Source
-```powershell
-winget source add mendix https://github.com/densmoe/winget-mendix
-```
+### Local Testing (for now)
 
-### Install Specific Version
-```powershell
-# Install Mx11.9.1
-winget install Mendix.MendixStudioPro --version 11.9.1 --source mendix
+Winget doesn't support GitHub repos as direct sources. To test locally:
 
-# Install Mx10.24.13
-winget install Mendix.MendixStudioPro --version 10.24.13 --source mendix
-```
-
-### List Available Versions
 ```powershell
+# Clone the repository
+git clone https://github.com/densmoe/winget-mendix.git
+cd winget-mendix
+
+# Add as local source (use absolute path)
+winget source add mendix file:///C:/path/to/winget-mendix/manifests
+
+# Install a version
+winget install Mendix.MendixStudioPro --version 11.6.5 --source mendix
+
+# List available versions
 winget search Mendix.MendixStudioPro --source mendix
 ```
+
+### Production Use
+
+For global availability, manifests need to be submitted to [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) via pull requests. Once stable and validated, we'll submit them upstream.
 
 ## Architecture Support
 
