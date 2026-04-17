@@ -209,7 +209,19 @@ func urlExists(url string) bool {
 		return false
 	}
 	defer resp.Body.Close()
-	return resp.StatusCode == 200
+
+	// Check both status code and content length
+	// Mendix CDN returns 200 with tiny error pages for missing files
+	if resp.StatusCode != 200 {
+		return false
+	}
+
+	// Valid installers are at least 100MB, anything smaller is likely an error page
+	if resp.ContentLength > 0 && resp.ContentLength < 100*1024*1024 {
+		return false
+	}
+
+	return true
 }
 
 func fetchSHA256FromCDN(url string) (string, error) {

@@ -38,32 +38,56 @@ Each version includes up to three installer variants:
 ## Developer Setup
 
 ### Prerequisites
-- Windows 10+ with winget
-- Go 1.21+
-- 7-Zip (`choco install 7zip`)
+- Go 1.21+ (for manifest generation)
+- 7-Zip (for GUID extraction)
+  - Windows: `choco install 7zip`
+  - macOS: `brew install p7zip`
 
-### Generate Manifests
-```powershell
+### Generate New Manifests
+
+The daily workflow automatically generates manifests for new releases. To manually generate:
+
+```bash
 cd tools/manifest-generator
-go run . -manifest-dir ../../manifests
+go run . -manifest-dir ../../manifests -min-major 9
 ```
 
-### Flags
-- `-skip-sha`: Skip SHA256 computation (faster, uses placeholders)
+### Extract Real GUIDs
+
+**Windows (recommended):**
+```powershell
+cd tools
+powershell -ExecutionPolicy Bypass -File .\update-guids-only.ps1
+```
+
+**macOS/Linux:**
+```bash
+cd tools
+./extract-guids.sh ../manifests/Mendix/MendixStudioPro 5
+```
+
+### Generator Flags
+- `-skip-sha`: Skip SHA256 computation (uses placeholders)
 - `-skip-guid`: Skip Product GUID extraction (uses placeholders)
 - `-dry-run`: Preview without writing files
 - `-version-types`: Filter by type (default: `LTS,MTS,Stable`)
 - `-min-major`: Minimum major version (default: `10`)
+- `-max-versions`: Limit batch size (default: unlimited)
+- `-workers`: Parallel workers (default: `5`)
 
 ## How It Works
 
 1. Queries Mendix Marketplace API for all Studio Pro releases
 2. Filters by version type (LTS/MTS/Stable) and minimum version (**Mx9.24+**)
-3. Checks CDN for all installer variants (machine x64, user x64, user arm64)
+3. Validates installer availability on CDN (checks file size to detect 404 errors)
 4. Fetches SHA256 hashes from CDN `.sha256` files (no full download needed)
-5. Extracts real Product GUIDs from machine installers using 7-Zip (for proper upgrade/uninstall tracking)
+5. Optionally extracts real Product GUIDs from machine installers using 7-Zip
 6. Generates three YAML manifest files per version (version, installer, defaultLocale)
-7. Daily GitHub Actions workflow processes 20 versions at a time with full GUID extraction
+7. Daily GitHub Actions workflow:
+   - Fetches all releases from Marketplace
+   - Filters out versions with existing manifests
+   - Processes next 10 versions that need manifests
+   - Skips to next batch automatically on subsequent runs
 
 ## Migration to Official Repository
 
