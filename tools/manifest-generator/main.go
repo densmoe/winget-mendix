@@ -74,11 +74,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *maxVersions > 0 && len(releases) > *maxVersions {
-		releases = releases[:*maxVersions]
+	// Filter out versions that already have manifests
+	var needsManifests []Release
+	for _, release := range releases {
+		manifestVersion := manifestVersionFor(release)
+		versionDir := filepath.Join(*manifestDir, "Mendix", "MendixStudioPro", manifestVersion)
+		if _, err := os.Stat(versionDir); os.IsNotExist(err) {
+			needsManifests = append(needsManifests, release)
+		}
 	}
 
-	fmt.Printf("Found %d releases, processing with %d workers\n", len(releases), *workers)
+	if *maxVersions > 0 && len(needsManifests) > *maxVersions {
+		needsManifests = needsManifests[:*maxVersions]
+	}
+
+	fmt.Printf("Found %d total releases, %d need manifests, processing %d with %d workers\n",
+		len(releases), len(needsManifests), len(needsManifests), *workers)
+
+	releases = needsManifests
 
 	var wg sync.WaitGroup
 	releaseChan := make(chan Release, len(releases))
