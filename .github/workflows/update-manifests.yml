@@ -29,7 +29,7 @@ jobs:
       - name: Generate manifests
         run: |
           cd tools/manifest-generator
-          ./manifest-generator.exe -manifest-dir ../../manifests -max-versions 5 -workers 2 -min-major 9
+          ./manifest-generator.exe -manifest-dir ../../manifests -max-versions 200 -workers 3 -min-major 9
 
       - name: Commit and push
         run: |
