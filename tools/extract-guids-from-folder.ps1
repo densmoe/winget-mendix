@@ -56,7 +56,8 @@ foreach ($installer in $installers) {
 
         # Check if GUID is already real (not a placeholder)
         $content = Get-Content $installerManifest -Raw
-        if ($content -match 'ProductCode: "([^"]+)"' -and $matches[1] -notmatch "PLACEHOLDER") {
+        $pattern = 'ProductCode: "([^"]+)"'
+        if ($content -match $pattern -and $matches[1] -notmatch "PLACEHOLDER") {
             Write-Host "[$processed/$($installers.Count)] ✓ $manifestVersion (already has GUID)" -ForegroundColor DarkGray
             $skipped++
             continue
@@ -81,8 +82,9 @@ foreach ($installer in $installers) {
 
             # Extract GUID from first MSI
             $msi = $msiFiles[0]
-            $guid = & 7z l "$($msi.FullName)" | Select-String 'Subject.*\{(.+?)\}' | ForEach-Object {
-                if ($_ -match '\{([A-F0-9\-]+)\}') {
+            $guidPattern = '\{([A-F0-9\-]+)\}'
+            $guid = & 7z l "$($msi.FullName)" | Select-String 'Subject' | ForEach-Object {
+                if ($_ -match $guidPattern) {
                     $matches[1]
                 }
             }
@@ -95,7 +97,8 @@ foreach ($installer in $installers) {
 
             # Update manifest with real GUID
             $guid = "{$guid}"
-            $newContent = $content -replace 'ProductCode: "[^"]+"', "ProductCode: `"$guid`""
+            $replacePattern = 'ProductCode: "[^"]+"'
+            $newContent = $content -replace $replacePattern, "ProductCode: `"$guid`""
             $newContent | Set-Content $installerManifest -NoNewline
 
             Write-Host "`r[$processed/$($installers.Count)] ✓ $manifestVersion → $guid" -ForegroundColor Green
