@@ -16,7 +16,7 @@ InstallModes:
   - silent
 InstallerSwitches:
   Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
-  SilentWithProgress: /SILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
 Installers:{{range .Installers}}
   - Architecture: {{.Arch}}
     InstallerType: exe
