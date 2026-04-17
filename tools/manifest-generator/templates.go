@@ -4,6 +4,7 @@ import "text/template"
 
 var packageManifestTemplate = template.Must(template.New("package").Parse(`PackageIdentifier: Mendix.MendixStudioPro
 PackageVersion: {{.Version}}
+PackageLocale: en-US
 PackageName: Mendix Studio Pro
 Publisher: Mendix
 PublisherUrl: https://www.mendix.com/

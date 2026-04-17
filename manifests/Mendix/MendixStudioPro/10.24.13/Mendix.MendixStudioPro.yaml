@@ -1,5 +1,6 @@
 PackageIdentifier: Mendix.MendixStudioPro
 PackageVersion: 10.24.13
+PackageLocale: en-US
 PackageName: Mendix Studio Pro
 Publisher: Mendix
 PublisherUrl: https://www.mendix.com/
