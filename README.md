@@ -58,12 +58,12 @@ go run . -manifest-dir ../../manifests
 ## How It Works
 
 1. Queries Mendix Marketplace API for all Studio Pro releases
-2. Filters by version type (LTS/MTS/Stable) and minimum version (Mx10+)
+2. Filters by version type (LTS/MTS/Stable) and minimum version (**Mx9.24+**)
 3. Checks CDN for all installer variants (machine x64, user x64, user arm64)
 4. Fetches SHA256 hashes from CDN `.sha256` files (no full download needed)
-5. Optionally extracts Product GUIDs from machine installers using 7-Zip
-6. Generates three YAML manifest files per version (package, installer, locale)
-7. Daily GitHub Actions workflow automates updates
+5. Extracts real Product GUIDs from machine installers using 7-Zip (for proper upgrade/uninstall tracking)
+6. Generates three YAML manifest files per version (version, installer, defaultLocale)
+7. Daily GitHub Actions workflow processes 20 versions at a time with full GUID extraction
 
 ## Migration to Official Repository
 
