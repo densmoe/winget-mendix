@@ -1,0 +1,31 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 9.24.37
+InstallModes:
+  - interactive
+  - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-9.24.37.77045-Setup.exe
+    InstallerSha256: 139B8719A231D5CCDB9B3E4289D67B2849665D61FFAE004B5EDF4F59DCCBED50
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{109c5219ae82c245ccb972df7b196a6e6bb25bd0_is1}"
+  - Architecture: x64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-9.24.37.77045-User-x64-Setup.exe
+    InstallerSha256: A38DB56C5D2F8BE139C9BCFE6852FCAEBA6022F49F01AA174593DBCC80AD8869
+    ProductCode: "{109c5219ae82c245ccb972df7b196a6e6bb25bd0_is1}"
+  - Architecture: arm64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-9.24.37.77045-User-arm64-Setup.exe
+    InstallerSha256: B41EDDDA3E9B65A6012253CBBDA788D27B97DC2470677D3D7FB0BBE64F8F6E39
+    ProductCode: "{109c5219ae82c245ccb972df7b196a6e6bb25bd0_is1}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
+ManifestVersion: 1.6.0

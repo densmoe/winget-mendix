@@ -133,12 +133,26 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 		return fmt.Sprintf("Skipping %s (already exists)", manifestVersion)
 	}
 
+	// Some Mx11 versions have a build number in the API but 3-part URLs on the CDN.
+	// Try the full version first; if it 404s, fall back to 3-part.
+	shortRelease := release
+	shortRelease.VersionFull = manifestVersion
+
 	var installers []InstallerData
 	for _, v := range variants {
 		url := v.urlFunc(release)
+		versionForProductCode := release.VersionFull
 
 		if !urlExists(url) {
-			continue
+			if release.VersionFull != manifestVersion {
+				url = v.urlFunc(shortRelease)
+				versionForProductCode = manifestVersion
+				if !urlExists(url) {
+					continue
+				}
+			} else {
+				continue
+			}
 		}
 
 		var sha string
@@ -152,16 +166,11 @@ func processRelease(release Release, manifestDir string, skipSHA, skipGUID, dryR
 			}
 		}
 
-		guid := GUIDPlaceholder(manifestVersion)
-		if !skipGUID && v.scope == "machine" {
-			tempFile, dlErr := downloadToTemp(url)
-			if dlErr == nil {
-				extracted, err := ExtractProductGUID(tempFile)
-				if err == nil {
-					guid = extracted
-				}
-				os.Remove(tempFile)
-			}
+		var guid string
+		if skipGUID {
+			guid = GUIDPlaceholder(manifestVersion)
+		} else {
+			guid = ProductCodeFor(versionForProductCode)
 		}
 
 		installers = append(installers, InstallerData{
@@ -247,28 +256,6 @@ func fetchSHA256FromCDN(url string) (string, error) {
 	}
 
 	return strings.ToUpper(parts[0]), nil
-}
-
-func downloadToTemp(url string) (string, error) {
-	client := &http.Client{Timeout: 10 * time.Minute}
-	resp, err := client.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	tempFile, err := os.CreateTemp("", "mendix-*.exe")
-	if err != nil {
-		return "", err
-	}
-	defer tempFile.Close()
-
-	if _, err := io.Copy(tempFile, resp.Body); err != nil {
-		os.Remove(tempFile.Name())
-		return "", err
-	}
-
-	return tempFile.Name(), nil
 }
 
 func writeManifest(path string, tmpl *template.Template, data ManifestData) error {

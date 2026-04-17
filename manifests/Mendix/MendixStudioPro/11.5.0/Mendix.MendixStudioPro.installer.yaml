@@ -1,0 +1,31 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 11.5.0
+InstallModes:
+  - interactive
+  - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.5.0-Setup.exe
+    InstallerSha256: 259B8AEACB83CF2B756FF8D3FEABEEFDA51B73C896655C4070A8941229D5C778
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{f2a7752949801995ec3123b63869dd36866ae0da_is1}"
+  - Architecture: x64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.5.0-User-x64-Setup.exe
+    InstallerSha256: C14FB27F9D8A0D81BB92BF062FAA3BE347A4159752DB9E684CDBFE306E75BE04
+    ProductCode: "{f2a7752949801995ec3123b63869dd36866ae0da_is1}"
+  - Architecture: arm64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.5.0-User-arm64-Setup.exe
+    InstallerSha256: F5C88C16154C291424D005E6546CFC38F77727706E008FBA23896A8D99159F66
+    ProductCode: "{f2a7752949801995ec3123b63869dd36866ae0da_is1}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
+ManifestVersion: 1.6.0

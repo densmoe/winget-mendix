@@ -13,19 +13,19 @@ Installers:
     InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.7.70712-Setup.exe
     InstallerSha256: 6AD10E24939E0E06D4A5404615E2AE20336FD3A5D0E465C66986BCEC018F7CFA
     ElevationRequirement: elevatesSelf
-    ProductCode: "{MENDIX-STUDIO-PRO-10-18-7-PLACEHOLDER}"
+    ProductCode: "{1b9be85c634cfe50f5a07d28ead2442cc823e1ef_is1}"
   - Architecture: x64
     InstallerType: exe
     Scope: user
     InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.7.70712-User-x64-Setup.exe
     InstallerSha256: 3678113A1E0D6397FBED5A0C9CFBC17F10DB781DB0C573C3B20AF297629B9A58
-    ProductCode: "{MENDIX-STUDIO-PRO-10-18-7-PLACEHOLDER}"
+    ProductCode: "{1b9be85c634cfe50f5a07d28ead2442cc823e1ef_is1}"
   - Architecture: arm64
     InstallerType: exe
     Scope: user
     InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.7.70712-User-arm64-Setup.exe
     InstallerSha256: 259A890958637865715220737E0B30B8C33C1BE70C04A578079F2EE3A409A8A8
-    ProductCode: "{MENDIX-STUDIO-PRO-10-18-7-PLACEHOLDER}"
+    ProductCode: "{1b9be85c634cfe50f5a07d28ead2442cc823e1ef_is1}"
 InstallationNotes: "Multiple versions can be installed side-by-side."
 ManifestType: installer
 ManifestVersion: 1.6.0
