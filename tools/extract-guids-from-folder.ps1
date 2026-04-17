@@ -56,7 +56,8 @@ foreach ($installer in $installers) {
 
         # Check if GUID is already real (not a placeholder)
         $content = Get-Content $installerManifest -Raw
-        if ($content -match "ProductCode: `"(.+?)`"" -and $matches[1] -notmatch "PLACEHOLDER") {
+        $checkPattern = 'ProductCode: "(.+?)"'
+        if ($content -match $checkPattern -and $matches[1] -notmatch "PLACEHOLDER") {
             Write-Host "[$processed/$($installers.Count)] ✓ $manifestVersion (already has GUID)" -ForegroundColor DarkGray
             $skipped++
             continue
@@ -95,10 +96,12 @@ foreach ($installer in $installers) {
 
             # Update manifest with real GUID
             $guid = "{$guid}"
-            $newContent = $content -replace "ProductCode: `".+?`"", "ProductCode: `"$guid`""
+            $replacePattern = 'ProductCode: ".+?"'
+            $replacement = "ProductCode: `"$guid`""
+            $newContent = $content -replace $replacePattern, $replacement
             $newContent | Set-Content $installerManifest -NoNewline
 
-            Write-Host "`r[$processed/$($installers.Count)] ✓ $manifestVersion → $guid" -ForegroundColor Green
+            Write-Host "`r[$processed/$($installers.Count)] ✓ $manifestVersion -> $guid" -ForegroundColor Green
             $updated++
 
         } catch {
@@ -115,7 +118,7 @@ foreach ($installer in $installers) {
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "✓ Updated:  $updated" -ForegroundColor Green
-Write-Host "⊘ Skipped:  $skipped" -ForegroundColor Yellow
-Write-Host "✗ Failed:   $failed" -ForegroundColor Red
+Write-Host "Updated:  $updated" -ForegroundColor Green
+Write-Host "Skipped:  $skipped" -ForegroundColor Yellow
+Write-Host "Failed:   $failed" -ForegroundColor Red
 Write-Host "========================================" -ForegroundColor Cyan
