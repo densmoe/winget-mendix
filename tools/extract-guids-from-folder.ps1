@@ -81,9 +81,8 @@ foreach ($installer in $installers) {
 
             # Extract GUID from first MSI
             $msi = $msiFiles[0]
-            $guidPattern = '\{([A-F0-9\-]+)\}'
             $guid = & 7z l "$($msi.FullName)" | Select-String 'Subject' | ForEach-Object {
-                if ($_ -match $guidPattern) {
+                if ($_ -match '\{([A-F0-9-]+)\}') {
                     $matches[1]
                 }
             }
