@@ -56,8 +56,7 @@ foreach ($installer in $installers) {
 
         # Check if GUID is already real (not a placeholder)
         $content = Get-Content $installerManifest -Raw
-        $pattern = 'ProductCode: "([^"]+)"'
-        if ($content -match $pattern -and $matches[1] -notmatch "PLACEHOLDER") {
+        if ($content -match 'ProductCode: "(.+?)"' -and $matches[1] -notmatch "PLACEHOLDER") {
             Write-Host "[$processed/$($installers.Count)] ✓ $manifestVersion (already has GUID)" -ForegroundColor DarkGray
             $skipped++
             continue
@@ -97,8 +96,7 @@ foreach ($installer in $installers) {
 
             # Update manifest with real GUID
             $guid = "{$guid}"
-            $replacePattern = 'ProductCode: "[^"]+"'
-            $newContent = $content -replace $replacePattern, "ProductCode: `"$guid`""
+            $newContent = $content -replace 'ProductCode: ".+?"', "ProductCode: `"$guid`""
             $newContent | Set-Content $installerManifest -NoNewline
 
             Write-Host "`r[$processed/$($installers.Count)] ✓ $manifestVersion → $guid" -ForegroundColor Green
