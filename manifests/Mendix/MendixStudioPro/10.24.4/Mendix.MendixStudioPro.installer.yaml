@@ -3,6 +3,9 @@ PackageVersion: 10.24.4
 InstallModes:
   - interactive
   - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /SILENT /SUPPRESSMSGBOXES /NORESTART
 Installers:
   - Architecture: x64
     InstallerType: exe

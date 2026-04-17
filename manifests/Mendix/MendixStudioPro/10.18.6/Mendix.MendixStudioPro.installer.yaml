@@ -3,6 +3,9 @@ PackageVersion: 10.18.6
 InstallModes:
   - interactive
   - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /SILENT /SUPPRESSMSGBOXES /NORESTART
 Installers:
   - Architecture: x64
     InstallerType: exe
