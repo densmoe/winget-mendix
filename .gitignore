@@ -13,6 +13,10 @@ temp/
 # Go
 go.work
 go.work.sum
+tools/manifest-generator/manifest-generator
+
+# Logs
+tools/manifest-generator/generate-all.log
 
 # IDE
 .vscode/

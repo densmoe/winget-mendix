@@ -17,6 +17,11 @@ jobs:
           cd tools/manifest-generator
           go build ./...
 
+      - name: Test
+        run: |
+          cd tools/manifest-generator
+          go test ./...
+
       - name: Vet
         run: |
           cd tools/manifest-generator

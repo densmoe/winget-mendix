@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   update:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -18,30 +18,26 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Install 7-Zip
-        run: choco install 7zip -y
-
       - name: Build generator
         run: |
           cd tools/manifest-generator
-          go build -o manifest-generator.exe .
+          go build -o manifest-generator .
 
       - name: Generate manifests
         run: |
           cd tools/manifest-generator
-          ./manifest-generator.exe -manifest-dir ../../manifests -max-versions 10 -workers 3 -min-major 9
+          ./manifest-generator -manifest-dir ../../manifests -max-versions 10 -workers 3 -min-major 9
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add manifests/
-          $newFiles = @(git diff --cached --name-only --diff-filter=A)
-          if ($newFiles.Count -gt 0) {
-            $versions = $newFiles | ForEach-Object { ($_ -split '/')[3] } | Select-Object -Unique
-            $message = "Add manifests for: $($versions -join ', ')"
-            git commit -m $message
+          NEW_FILES=$(git diff --cached --name-only --diff-filter=A)
+          if [ -n "$NEW_FILES" ]; then
+            VERSIONS=$(echo "$NEW_FILES" | cut -d'/' -f4 | sort -u | tr '\n' ', ' | sed 's/, $//')
+            git commit -m "Add manifests for: $VERSIONS"
             git push
-          } else {
-            Write-Host "No new manifests to commit"
-          }
+          else
+            echo "No new manifests to commit"
+          fi
