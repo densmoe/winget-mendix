@@ -1,0 +1,31 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 10.18.10
+InstallModes:
+  - interactive
+  - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.10.76219-Setup.exe
+    InstallerSha256: D7D7FFD0A8E2F0845A6D49AB1863795BC959CF7ADBA3242BD464F34FCFD75D47
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{MENDIX-STUDIO-PRO-10-18-10-PLACEHOLDER}"
+  - Architecture: x64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.10.76219-User-x64-Setup.exe
+    InstallerSha256: 867D56B790708489F9B5A44AB1991209A339E316C8590DBC4F9AC1A80C375050
+    ProductCode: "{MENDIX-STUDIO-PRO-10-18-10-PLACEHOLDER}"
+  - Architecture: arm64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-10.18.10.76219-User-arm64-Setup.exe
+    InstallerSha256: B420F124B9CFB73ED9E5B1B18B9CA67E7093FDD02226656395FF7C23714427E9
+    ProductCode: "{MENDIX-STUDIO-PRO-10-18-10-PLACEHOLDER}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
+ManifestVersion: 1.6.0

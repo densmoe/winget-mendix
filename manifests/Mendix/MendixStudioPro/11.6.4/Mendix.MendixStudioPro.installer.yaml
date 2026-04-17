@@ -1,0 +1,31 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 11.6.4
+InstallModes:
+  - interactive
+  - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.6.4-Setup.exe
+    InstallerSha256: 27F12F3976EFD878FAD44970DCF2BF5CC57A5C6F88F84310E2880933743B0688
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{MENDIX-STUDIO-PRO-11-6-4-PLACEHOLDER}"
+  - Architecture: x64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.6.4-User-x64-Setup.exe
+    InstallerSha256: 27E0D24ADAD8D8C941B1E275759C02718A95929FBDD93E72F27BF6F45E89B770
+    ProductCode: "{MENDIX-STUDIO-PRO-11-6-4-PLACEHOLDER}"
+  - Architecture: arm64
+    InstallerType: exe
+    Scope: user
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-11.6.4-User-arm64-Setup.exe
+    InstallerSha256: FE365A202645B951569B9A0C1D2F0864D23221724904D4D0AAD6A702CC0709DF
+    ProductCode: "{MENDIX-STUDIO-PRO-11-6-4-PLACEHOLDER}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
+ManifestVersion: 1.6.0
