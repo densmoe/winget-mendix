@@ -1,0 +1,19 @@
+PackageIdentifier: Mendix.MendixStudioPro
+PackageVersion: 9.7.0
+InstallModes:
+  - interactive
+  - silent
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+  SilentWithProgress: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Installers:
+  - Architecture: x64
+    InstallerType: exe
+    Scope: machine
+    InstallerUrl: https://artifacts.rnd.mendix.com/modelers/Mendix-9.7.0.29648-Setup.exe
+    InstallerSha256: 11F755114D2EA274870E600B0ECE87AD2178BBA4BD8C21F881D6F7F23A3F9E77
+    ElevationRequirement: elevatesSelf
+    ProductCode: "{2d361396aa868e4b525a2a1ba61e4339c36d13b9_is1}"
+InstallationNotes: "Multiple versions can be installed side-by-side."
+ManifestType: installer
+ManifestVersion: 1.6.0
